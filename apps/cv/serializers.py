@@ -20,7 +20,7 @@ def prompt_job_title(question):
         model=g4f.models.gpt_4o,
         messages=[{"role": "user", "content": f"""Your task is to create a job title basde on this data: {question}.
                    There should be max 2 words. If it is 2 words than instead of space between them put + like
-                   python+developer or software+engineer"""}]
+                   python+developer or software+engineer. Remember, just send the answer and no words more"""}]
     )
     
     return response
@@ -36,10 +36,24 @@ class CvSerializer(serializers.ModelSerializer):
         model = Cv
         fields = ("id", "user", "job_title", "prompt", "cv_text", "cv")
 
+    def create_or_update(self, validated_data):
+        user = self.context['request'].user
+        cv_instance, created = Cv.objects.get_or_create(user=user)
+
+        if not created:
+            # Update existing instance
+            for attr, value in validated_data.items():
+                setattr(cv_instance, attr, value)
+            cv_instance.save()
+            return cv_instance
+
+        # Create new instance
+        return super().create(validated_data)
+
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         validated_data['job_title'] = prompt_job_title(validated_data['prompt'])
         validated_data['cv'] = "default_cv.pdf"
         validated_data['cv_text'] = prompt(validated_data['prompt'])
 
-        return super().create(validated_data)
+        return self.create_or_update(validated_data)
