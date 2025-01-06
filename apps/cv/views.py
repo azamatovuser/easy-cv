@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
-from apps.cv.models import Cv
-from apps.cv.serializers import CvSerializer
+from apps.cv.models import Cv, Contact
+from apps.cv.serializers import CvSerializer, ContactSerializer
 
 
 def parse_data_hh(job_title):
@@ -28,17 +28,19 @@ def parse_data_hh(job_title):
         for card in job_cards:
             job_info = {}
             
-            # Extract title
+            # Extract title and link
             title_elem = card.find('span', {'data-qa': 'serp-item__title-text'})
+            link_elem = card.find('a', {'data-qa': 'serp-item__title'})
             job_info['title'] = title_elem.text.strip() if title_elem else None
+            job_info['link'] = link_elem['href'] if link_elem else None  # Extract link
             
             # Extract company name
             company_elem = card.find('span', {'data-qa': 'vacancy-serp__vacancy-employer-text'})
             job_info['company'] = company_elem.text.strip() if company_elem else None
             
             # Extract salary
-            salary_elem = card.find('span', {'class': 'magritte-text_typography-label-1-regular___pi3R-_3-0-19'})
-            job_info['salary'] = salary_elem.text.strip() if salary_elem else None
+            salary_elem = card.find('span', {'class': 'magritte-text___pbpft_3-0-22 magritte-text_style-primary___AQ7MW_3-0-22 magritte-text_typography-label-1-regular___pi3R-_3-0-22'})
+            job_info['salary'] = salary_elem.get_text(strip=True) if salary_elem else None  # Capture full salary text
 
             jobs_data.append(job_info)
         
@@ -70,3 +72,8 @@ class CvCreateAPIView(generics.CreateAPIView):
 class CvListAPIView(generics.ListAPIView):
     queryset = Cv.objects.all()
     serializer_class = CvSerializer
+
+
+class ContactCreateAPIView(generics.CreateAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer

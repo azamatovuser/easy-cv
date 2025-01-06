@@ -1,17 +1,22 @@
 from rest_framework import serializers
-from apps.cv.models import Cv
+from apps.cv.models import Cv, Contact
 import g4f
 
 
 def prompt(question):
     response = g4f.ChatCompletion.create(
         model=g4f.models.gpt_4o,
-        messages=[{"role": "user", "content": f"""Your task is to create a cv base on this data: {question}. 
-                   Cv should have 4 sections: About me/Contact, Education, Experience, Skills.
-                   The CV should be in russian language. Result should be only cv. If there is missing data,
-                   just skip or based on given data fill it"""}]
+        messages=[{"role": "user", "content": f"""Создай профессиональное резюме на основе следующих данных: {question}.
+                                                Резюме должно содержать 4 раздела:
+                                                1. О себе / Контактная информация  
+                                                2. Образование  
+                                                3. Опыт работы  
+                                                4. Навыки  
+
+                                                Текст должен быть на русском языке. Если какие-то данные отсутствуют, просто пропусти этот раздел.  
+                                                Форматируй текст четко и структурированно, чтобы резюме выглядело профессионально и готово к отправке работодателю.  
+                                                Ответ должен содержать только текст резюме, без дополнительных комментариев."""}]
     )
-    
     return response
 
 
@@ -36,24 +41,18 @@ class CvSerializer(serializers.ModelSerializer):
         model = Cv
         fields = ("id", "user", "job_title", "prompt", "cv_text", "cv")
 
-    def create_or_update(self, validated_data):
-        user = self.context['request'].user
-        cv_instance, created = Cv.objects.get_or_create(user=user)
-
-        if not created:
-            # Update existing instance
-            for attr, value in validated_data.items():
-                setattr(cv_instance, attr, value)
-            cv_instance.save()
-            return cv_instance
-
-        # Create new instance
-        return super().create(validated_data)
-
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         validated_data['job_title'] = prompt_job_title(validated_data['prompt'])
-        validated_data['cv'] = "default_cv.pdf"
+        validated_data['cv'] = None
         validated_data['cv_text'] = prompt(validated_data['prompt'])
 
-        return self.create_or_update(validated_data)
+        return super().create(validated_data)
+
+    
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"

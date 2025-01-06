@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # apps
     'apps.account',
     'apps.cv',
+    'apps.order',
 
     # libraries
     "rest_framework",

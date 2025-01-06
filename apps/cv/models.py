@@ -8,7 +8,15 @@ class Cv(models.Model):
     prompt = models.TextField()
     cv_text = models.TextField(null=True)
     cv = models.FileField(upload_to='cv_pdfs/', null=True, blank=True)
-    is_paid = models.BooleanField(default=False, null=True)
 
     def __str__(self):
         return self.user.username
+    
+
+class Contact(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    message = models.TextField()
+
+    def __str__(self):
+        return self.name
