@@ -4,5 +4,4 @@ from apps.order.models import Order
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("cv__user", "from_date", "to_date", "is_paid")
-    list_filter = ("cv__user", )
+    list_display = ("from_date", "to_date", "is_paid")
