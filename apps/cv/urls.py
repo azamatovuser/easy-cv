@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.cv.views import VacanciesListAPIView, CvCreateAPIView, CvListAPIView, ContactCreateAPIView
+from apps.cv.views import VacanciesListAPIView, CvCreateAPIView, CvListAPIView, ContactCreateAPIView, CvViewAPIView
 
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('cv_create/', CvCreateAPIView.as_view()),
     path('cv_list/', CvListAPIView.as_view()),
     path('contact_create/', ContactCreateAPIView.as_view()),
+    path('cv_result/<int:pk>/', CvViewAPIView.as_view()),
 ]

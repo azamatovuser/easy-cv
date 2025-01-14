@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from apps.cv.models import Cv, Contact
 from apps.cv.serializers import CvSerializer, ContactSerializer
+import re
 
 
 def parse_data_hh(job_title):
@@ -51,6 +52,57 @@ def parse_data_hh(job_title):
         return []
 
 
+def parse_resume(text):
+    # Extracting full name
+    full_name = re.search(r"Имя: (.+)", text)
+    full_name = full_name.group(1).strip() if full_name else ""  # Default to empty string if not found
+    
+    # Extracting phone number
+    number = re.search(r"Телефон: ([+\d\s\-]+)", text)
+    number = number.group(1).strip() if number else ""  # Default to empty string if not found
+    
+    # Extracting email
+    email = re.search(r"Почта: (.+)", text)
+    email = email.group(1).strip() if email else ""  # Default to empty string if not found
+    
+    # Extracting "about me" section
+    about_me_match = re.search(r"Обо мне\s+(.+?)\s+next", text, re.DOTALL)
+    about_me = about_me_match.group(1).strip() if about_me_match else ""  # Default to empty string if not found
+    
+    # Extracting job experience
+    jobs = []
+    for job_match in re.finditer(r"Компания: (.+?)\s+Должность: (.+?)\s+Дата: (.+?) - (.+?)\s+Описание: (.+?)\s+next", text, re.DOTALL):
+        jobs.append({
+            "name_company": job_match.group(1).strip(),
+            "job_title": job_match.group(2).strip(),
+            "from_date": job_match.group(3).strip(),
+            "to_date": job_match.group(4).strip(),
+            "job_description": job_match.group(5).strip()
+        })
+    
+    # Extracting education
+    education_match = re.search(r"Университет: (.+?)\s+Направление: (.+?)\s+next", text, re.DOTALL)
+    education = {
+        "university": education_match.group(1).strip(),
+        "major": education_match.group(2).strip()
+    } if education_match else {}
+    
+    # Extracting skills
+    skills_match = re.search(r"Навыки\s+- (.+)", text, re.DOTALL)
+    skills = [skill.strip() for skill in skills_match.group(1).split("\n- ")] if skills_match else []
+    
+    # Compiling the result
+    return {
+        "full_name": full_name,
+        "number": number,
+        "email": email,
+        "about_me": about_me,
+        "jobs": jobs,
+        "education": education,
+        "skills": skills
+    }
+
+
 class VacanciesListAPIView(APIView):
     def get(self, request, cv_id):
         job_title = Cv.objects.get(id=cv_id).job_title
@@ -77,3 +129,11 @@ class CvListAPIView(generics.ListAPIView):
 class ContactCreateAPIView(generics.CreateAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+
+class CvViewAPIView(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        cv = Cv.objects.get(id=pk)
+        response_data = parse_resume(cv.cv_text)
+
+        return Response(response_data)

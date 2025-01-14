@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Resume</title>
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    /* General Styles */
+    body {
+      background-color: #f7fafc;
+      padding: 1.5rem;
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    header p {
+      color: #6b7280;
+      margin: 0.5rem 0 0;
+    }
+
+    /* Section Styles */
+    section {
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      color: #374151;
+    }
+
+    /* Professional Experience */
+    .professional-experience {
+      margin-top: 1rem;
+    }
+
+    .professional-experience .experience-item {
+      margin-top: 1.5rem;
+    }
+
+    .professional-experience .experience-item h3 {
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .professional-experience .experience-item p {
+      margin: 0.25rem 0;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .professional-experience ul {
+      list-style-type: disc;
+      margin: 0.5rem 0 0 1.5rem;
+      color: #4b5563;
+    }
+
+    /* Skills */
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .skills .skill-item {
+      padding: 0.5rem 1rem;
+      background-color: #e5e7eb;
+      color: #374151;
+      border-radius: 9999px;
+    }
+
+    /* Education */
+    .education {
+      margin-top: 1rem;
+    }
+
+    .education p {
+      color: #374151;
+      margin: 0;
+    }
+
+    .education .subtitle {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    @media only screen  and (max-width: 425px) {
+      .row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Henrietta Mitchell</h1>
+      <p>+998909000000 &middot; user@gmail.com</p>
+    </header>
+
+    <section>
+      <h2>About Me</h2>
+      <p>Motivated and results-driven Business School graduate seeking a challenging position within a large organisation as a Business Analyst or Project Manager. Offering a strong foundation in business strategy, data analysis, and project management, with a proven ability to drive efficiency, deliver successful outcomes and collaborate within cross-functional teams.</p>
+    </section>
+
+    <section class="professional-experience">
+      <h2>Professional Experience</h2>
+
+      <div class="experience-item">
+        <div class="row">
+          <div>
+            <h3>Arowwai Industries</h3>
+            <p>Business Analyst Intern</p>
+          </div>
+          <p>Oct 2023 - Present</p>
+        </div>
+        <ul>
+          <li>Developed and implemented a streamlined process for gathering business requirements, reducing project delivery time by 15%.</li>
+          <li>Created a standardised reporting framework, improving visibility of key performance metrics and enabling data-driven decision-making.</li>
+        </ul>
+      </div>
+
+
+      <div class="experience-item">
+        <div class="row">
+          <div>
+            <h3>Hanover and Tyke</h3>
+            <p>Project Management Assistant</p>
+          </div>
+          <p>Jan 2022 - Aug 2023</p>
+        </div>
+        <ul>
+          <li>Assisted project managers in planning and executing various projects, ensuring adherence to timelines and deliverables.</li>
+          <li>Monitored project budgets, tracked expenses, and prepared financial reports to ensure cost-effectiveness.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <div class="row">
+          <div>
+            <h3>Giggling Platypus Co.</h3>
+            <p>Barista</p>
+          </div>
+          <p>July 2020 - Jan 2022</p>
+        </div>
+        <ul>
+          <li>Prepared and served a variety of beverages with precision and creativity, consistently meeting quality standards.</li>
+          <li>Received compliments for latte art and presentation.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="education">
+      <h2>Education</h2>
+      <p>Bachelor of Business Administration</p>
+      <p class="subtitle">Majors: Analytics and Project Management</p>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <div class="skills">
+        <span class="skill-item">Python</span>
+        <span class="skill-item">Data Analysis</span>
+        <span class="skill-item">Project Management</span>
+        <span class="skill-item">Communication</span>
+        <span class="skill-item">Critical Thinking</span>
+      </div>
+    </section>
+  </div>
+</body>
+
+</html>
