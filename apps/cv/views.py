@@ -71,7 +71,7 @@ def parse_resume(text):
     
     # Extracting job experience
     jobs = []
-    for job_match in re.finditer(r"Компания: (.+?)\s+Должность: (.+?)\s+Дата: (.+?) - (.+?)\s+Описание: (.+?)\s+next", text, re.DOTALL):
+    for job_match in re.finditer(r"Имя компании: (.+?)\s+Должность: (.+?)\s+Дата: (.+?) - (.+?)\s+Описание: (.+?)\s+next", text, re.DOTALL):
         jobs.append({
             "name_company": job_match.group(1).strip(),
             "job_title": job_match.group(2).strip(),
