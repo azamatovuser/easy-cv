@@ -81,7 +81,7 @@ def parse_resume(text):
         })
     
     # Extracting education
-    education_match = re.search(r"Университет: (.+?)\s+Направление: (.+?)\s+next", text, re.DOTALL)
+    education_match = re.search(r"Имя университета: (.+?)\s+Направление: (.+?)\s+next", text, re.DOTALL)
     education = {
         "university": education_match.group(1).strip(),
         "major": education_match.group(2).strip()
