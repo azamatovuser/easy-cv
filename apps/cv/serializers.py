@@ -1,17 +1,28 @@
-import requests
 from rest_framework import serializers
 from apps.cv.models import Cv, Contact
+import openai
+import os
+from openai import OpenAI
 
-OLLAMA_API_URL = "http://localhost:11434/api/generate"
+# Set your OpenAI API key
+client = OpenAI(
+    api_key=os.environ.get("OPENAPI_KEY"),  # This is the default and can be omitted
+)
 
 def prompt(question):
     """
-    Generate a professional resume based on user input using Ollama.
+    Generate a professional resume based on user input.
+
+    :param question: User-provided details for the resume.
+    :return: Formatted resume as a string.
     """
     try:
-        data = {
-            "model": "mistral",  # Change model if needed
-            "prompt": f"""Создай профессиональное резюме на основе следующих данных: {question}.
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # Use "gpt-4" or "gpt-3.5-turbo" as needed
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""Создай профессиональное резюме на основе следующих данных: {question}.
                         Резюме должно содержать 4 раздела:
                         1. Контактная информация
                             Тут должно быть:
@@ -34,42 +45,38 @@ def prompt(question):
                         И перед каждым разделом раздели их символом next. Между разделами будет только слово next и всё.
                         Текст должен быть на русском языке. Форматируй текст чётко и структурированно, чтобы резюме выглядело 
                         профессионально и готово к отправке работодателю. Ответ должен содержать только текст резюме, без 
-                        дополнительных комментариев. Не добавь от себя ничего, это важно! Если данные отсутствуют какие-то, то пропусти этот раздел""",
-            "stream": False
-        }
-        
-        response = requests.post(OLLAMA_API_URL, json=data)
-        
-        if response.status_code == 200:
-            return response.json().get("response", "").strip()
-        else:
-            return f"Error: {response.status_code} - {response.text}"
-    
+                        дополнительных комментариев. Не добавь от себя ничего, это важно! Если данные отсутствую какие то, то пропусти этот раздел"""
+                }
+            ]
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"An error occurred: {e}"
 
+
 def prompt_job_title(question):
     """
-    Generate a concise job title based on user input using Ollama.
+    Generate a concise job title based on user input.
+
+    :param question: User-provided details for the job title.
+    :return: A job title in the required format.
     """
     try:
-        data = {
-            "model": "mistral",  # Change model if needed
-            "prompt": f"""Your task is to create a job title based on this data: {question}.
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # Use "gpt-4" or "gpt-3.5-turbo" as needed
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""Your task is to create a job title based on this data: {question}.
                         There should be max 2 words. If it is 2 words, then instead of a space between them, put + like
-                        python+developer or software+engineer. Remember, just send the answer and no words more.""",
-            "stream": False
-        }
-        
-        response = requests.post(OLLAMA_API_URL, json=data)
-        
-        if response.status_code == 200:
-            return response.json().get("response", "").strip()
-        else:
-            return f"Error: {response.status_code} - {response.text}"
-    
+                        python+developer or software+engineer. Remember, just send the answer and no words more."""
+                }
+            ]
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"An error occurred: {e}"
+
 
 class CvSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -89,7 +96,10 @@ class CvSerializer(serializers.ModelSerializer):
 
         return super().create(validated_data)
 
+    
+
+
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = "__all__" 
+        fields = "__all__"
